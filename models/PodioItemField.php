@@ -609,43 +609,50 @@ class PodioDateItemField extends PodioItemField {
 /**
  * phone field
  */
-class PodioPhoneItemField extends PodioPhoneOrEmailItemField
+class PodioPhoneItemField extends PodioItemField
 {
+    public function humanized_value()
+    {
+        if (!$this->values) {
+            return '';
+        }
 
+        $values = array();
+        foreach ($this->values as $value) {
+            $values[] = $value['type'] . ': ' . $value['value'];
+        }
+        return join(';', $values);
+    }
+
+    public function api_friendly_values()
+    {
+        return $this->values ? $this->values : array();
+    }
 }
 
 
 /**
  * email field
  */
-class PodioEmailItemField extends PodioPhoneOrEmailItemField
+class PodioEmailItemField extends PodioItemField
 {
+    public function humanized_value()
+    {
+        if (!$this->values) {
+            return '';
+        }
 
-}
-
-/**
- * phone ore email field
- */
-abstract class PodioPhoneOrEmailItemField extends PodioItemField
-{
-
-  public function humanized_value()
-  {
-    if (!$this->values) {
-      return '';
+        $values = array();
+        foreach ($this->values as $value) {
+            $values[] = $value['type'] . ': ' . $value['value'];
+        }
+        return join(';', $values);
     }
 
-    $values = array();
-    foreach ($this->values as $value) {
-      $values[] = $value['type'] . ': ' . $value['value'];
+    public function api_friendly_values()
+    {
+        return $this->values ? $this->values : array();
     }
-    return join(';', $values);
-  }
-
-  public function api_friendly_values()
-  {
-    return $this->values ? $this->values : array();
-  }
 }
 
 /**
@@ -1122,7 +1129,7 @@ class PodioCalculationItemField extends PodioItemField {
   public function __get($name) {
     $attribute = parent::__get($name);
     if ($name == 'values' && $attribute) {
-      return (isset($attribute[0]['value'])) ? $attribute[0]['value'] : $attribute[0];
+      return $attribute[0]['value'];
     }
     return $attribute;
   }
